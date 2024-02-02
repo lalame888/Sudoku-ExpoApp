@@ -9,10 +9,13 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "eslint-config-prettier": "^9.1.0",
     "expo": "~50.0.5",
     "expo-status-bar": "~1.11.1",
+    "prettier": "^3.2.4",
     "react": "18.2.0",
-    "react-native": "0.73.2"
+    "react-native": "0.73.2",
+    "react-native-popover-view": "^5.1.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
