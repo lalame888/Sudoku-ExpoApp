@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { SquareValue, SudokuAns, SudokuData, SudokuPlayground, SudokuRow } from '../lib/interface/'
-import { View, StyleSheet, Text, Dimensions, TouchableWithoutFeedback } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, TouchableWithoutFeedback, TouchableOpacity } from 'react-native'
 import { Square } from './Square'
 
 interface GameLevelProps {
@@ -110,19 +110,20 @@ export function GameLevel(props: GameLevelProps){
         },
         console: {
             flex: 1,
-            flexGrow: 1,
             marginTop: 50
         },
         consoleKeyboard: {
             flexDirection: 'row',
-            flex: 1, 
-            width: outerContainerSize-10,
-            alignItems: 'flex-end',
-            marginBottom: 40
+            flexWrap: 'wrap',
+            width: (outerContainerSize-10)/2,
+            alignSelf: 'flex-end',
+            justifyContent: 'flex-end',
+            backgroundColor: 'lightgray'
         },
         numberKey:{
-            borderRadius: 10,
-            height: 50
+            height: (outerContainerSize-10)/6,
+            width: (outerContainerSize-10)/6,
+            flexBasis: '33%',
         }
     });
   
@@ -176,6 +177,16 @@ export function GameLevel(props: GameLevelProps){
                             />
                         )
                     })}
+                    <Square 
+                        style={styles.numberKey}
+                        index={0} 
+                        isSelected={false} 
+                        onPress={()=> {
+                            if (selected) updateValue({ans: null, guess: data[selected.row][selected.col].guess, isFix: false})
+
+                        }} 
+                    />
+                   
                     </View>
                 </View>
             </View>

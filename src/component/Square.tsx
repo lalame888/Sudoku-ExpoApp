@@ -5,7 +5,7 @@ import { useMemo } from "react";
 
 interface SquareProps {
     index: number,
-    value: SquareValue,
+    value?: SquareValue,
     isSelected: boolean
     onPress(): void;
     error?: boolean // 顯示錯誤
@@ -13,6 +13,7 @@ interface SquareProps {
 }
 export function Square(props: SquareProps){
   const backgroundColor = useMemo(()=>{
+    if (!props.value) return 'white';
     if (props.value.isFix) return'lightgray'
     if (props.error) return  '#f09d9d' 
     if(props.value.ans === null ) return 'white' 
@@ -46,9 +47,10 @@ const styles = StyleSheet.create({
     <TouchableOpacity 
       style={{...styles.button, ...props.style  }} 
       onPress={onPress} 
-      disabled={props.value.isFix}
+      disabled={props.value?.isFix}
+      activeOpacity={0.65}
     >
-      <Text style={styles.text}>{props.value.ans || ''} </Text>
+      <Text style={styles.text}>{props.value ?  props.value.ans|| '' : '清空'} </Text>
     </TouchableOpacity>
   )
 }
