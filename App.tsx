@@ -4,7 +4,7 @@ import { GameLevel } from './src/component';
 import { SudokuAns, SudokuPlayground, SudokuRow } from './src/lib/interface';
 
 export default function App() {
-  const fakeData: SudokuRow<SudokuAns> = [1,2,3,4,5,6,7,8,9];
+  const fakeData: SudokuRow<SudokuAns> = [1,2,3,null,5,6,null,8,9];
   const fakeRow: SudokuPlayground<SudokuAns> = [fakeData,fakeData,fakeData,fakeData,fakeData,fakeData,fakeData,fakeData,fakeData];
   return (
     <View style={styles.container}>

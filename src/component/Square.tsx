@@ -1,27 +1,26 @@
-import { Dimensions, Text, TouchableHighlight, TouchableOpacity, View } from "react-native";
+import { GestureResponderEvent, StyleProp, Text, TouchableOpacity, ViewStyle } from "react-native";
 import { SquareValue } from "../lib/interface";
 import { StyleSheet } from 'react-native';
-import Popover from "react-native-popover-view";
 
 interface SquareProps {
     index: number,
     value: SquareValue,
-    setValue(newValue: SquareValue): void;
+    isSelected: boolean
+    onPress(): void;
     error?: boolean // 顯示錯誤
+    style?: any
 }
 export function Square(props: SquareProps){
-  const { width, height } = Dimensions.get('window');
-
-
 const styles = StyleSheet.create({
     button: {
-      flexBasis: '11%', // 每個格子佔外層View的1/3
+      flex:1,
+      flexBasis: 1/9, // 每個格子佔外層View的1/9
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: props.error ? '#f09d9d' : '#fefbf3',
-      borderColor: 'gray', borderWidth: 1,
-      marginRight: props.index %3 === 2 ? 2 : 0,
-      borderRightWidth:  props.index %3 === 2 ? 2 : 0,
+      backgroundColor: props.value.isFix? 'lightgray': props.error ? '#f09d9d' : '#fefbf3',
+      borderColor: props.isSelected? 'red' :  'gray',
+      borderWidth: 1, 
+      marginRight: props.index %3 === 2 ? 3 : 0,
     },
     text: {},
     popover: {
@@ -32,21 +31,18 @@ const styles = StyleSheet.create({
       height: 50
     }
   });
-  function onPress (){
-
+  function onPress(event: GestureResponderEvent){
+    event.stopPropagation();
+    props.onPress();
   }
-    return (
-        <Popover
-        
-          from={(
-            <TouchableOpacity style={styles.button}>
-            <Text style={styles.text}>{props.value.ans || ''} </Text>
-            </TouchableOpacity>
-          )}
-        >
-        <View style={styles.popover}>
-
-        </View>
-    </Popover>)
+  return (
+    <TouchableOpacity 
+      style={{...styles.button, ...props.style  }} 
+      onPress={onPress} 
+      disabled={props.value.isFix}
+    >
+      <Text style={styles.text}>{props.value.ans || ''} </Text>
+    </TouchableOpacity>
+  )
 }
 
