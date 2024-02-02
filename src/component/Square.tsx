@@ -9,7 +9,7 @@ interface SquareProps {
     isSelected: boolean
     onPress(): void;
     error?: boolean // 顯示錯誤
-    style?: any
+    style?: StyleProp<ViewStyle>;
 }
 export function Square(props: SquareProps){
   const backgroundColor = useMemo(()=>{
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   }
   return (
     <TouchableOpacity 
-      style={{...styles.button, ...props.style  }} 
+      style={[styles.button,props.style]} 
       onPress={onPress} 
       disabled={props.value?.isFix}
       activeOpacity={0.65}
