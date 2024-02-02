@@ -1,4 +1,4 @@
-import { LevelData, SquareValue } from '../lib/interface/'
+import { LevelData, SquareValue, SudokuAns, SudokuPlayground } from '../lib/interface/'
 import { FontAwesome5 } from '@expo/vector-icons';
 import { View, StyleSheet, Text, Dimensions, TouchableWithoutFeedback, Modal, TouchableHighlight, TouchableOpacity, Button } from 'react-native'
 import { Square } from './Square'
@@ -6,15 +6,22 @@ import { useTimer } from '../lib/hook'
 import { useSudoku } from './useHook/useSudoku'
 import { useEffect } from 'react';
 
+// TODO:
+/**
+ * 1. 主畫面、儲存結果、載入儲存資料
+ * 2. 開關錯誤檢查功能 （不要一開始就開啟，或是可以預設開啟，後來關閉）
+ * 3. 筆記、猜測功能切換
+ * 4. 設置：回主頁面、重新遊戲、跟開關錯誤項之類的設定放一起
+ */
 interface GameLevelProps {
     sudokuData: LevelData,
     next(): void,
-    back(): void
-
+    back(): void,
+    setSaveData(newSave: LevelData): void;
 }
 
 export function GameLevel(props: GameLevelProps){
-    const {timeText, showTime, isPaused, startTimer, pauseTimer} = useTimer(props.sudokuData.data);
+    const {timer, timeText, showTime, isPaused, startTimer, pauseTimer} = useTimer(props.sudokuData.data);
     const {data,selected,setSelected, isError , isSuccess, updateValue, superCheat} = useSudoku(props.sudokuData.data) 
     const MARGIN = 10;  
     const { width, height } = Dimensions.get('window');
@@ -73,13 +80,16 @@ export function GameLevel(props: GameLevelProps){
         // 完成關卡
         if (isSuccess) {
             pauseTimer(); // 停止計時
-            // TODO: 應該要儲存資料
+            props.setSaveData({  // 儲存資料
+                ...props.sudokuData,
+                time: timer,
+                data: {
+                    ...props.sudokuData.data,
+                    ans: data.map((row)=> row.map((col)=> col.ans)) as SudokuPlayground<SudokuAns>
+                }
+            })
         }
-        
-    },[isSuccess])
-    function Next(){
-        props.next();
-    }
+    },[isSuccess, timer, props.sudokuData])
 
     return (
         <View>
@@ -166,7 +176,7 @@ export function GameLevel(props: GameLevelProps){
                         <Text>完成關卡！ 花費時間: {timeText}</Text>
                         <View  style={styles.textContainer}>
                             <Button title='回主頁面'/>
-                            <Button title='下一關' onPress={Next}/>
+                            <Button title='下一關' onPress={props.next}/>
                         </View>
                     </View>
                 </View>

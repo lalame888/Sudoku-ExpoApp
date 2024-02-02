@@ -1,39 +1,36 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { GameLevel } from './src/component';
 import { LevelData, SudokuAns, SudokuPlayground, SudokuRow } from './src/lib/interface';
 import { generateSudoku, removeCells } from './src/lib/utils';
 import { useState } from 'react';
 import { SudokuLevelAns } from './src/lib/utils/levelData';
+import { SecureStoreState, useSecureStore } from './src/lib/hook';
+import HomePage from './src/page/Home';
 
 export default function App() {
-  function generate(level: number): LevelData {
-    const difficulty = Math.sqrt(level + 5) *0.1 * 0.9;
-    const ans = (level < SudokuLevelAns.length) ? SudokuLevelAns[level - 1] : SudokuLevelAns[Math.floor(Math.random()* SudokuLevelAns.length)];
-    const init = removeCells(ans, difficulty)
-    return {
-      level,
-      difficulty,
-      data: {ans, init},
-      time: -1,
-      helpCount: 0
-    }
+  // 載入資料
+  const [saveData, setSaveData, status] = useSecureStore<LevelData[]>('sudokuData',[]);
+  function updateSaveData(newSave: LevelData) {
+    setSaveData((arr)=>{
+      if (!arr) return [newSave];
+      const index = arr.findIndex((term)=> term.level);
+      if (index === -1) return [...arr, newSave];
+      const newArr = [...arr];
+      newArr[index] = newSave;
+      return newArr;
+    })
   }
-  const [data, setData] = useState<LevelData>(generate(1))
-  
-  function Next(){
-    setData((oldData)=> generate(oldData.level + 1));
-  }
-  
-
   return (
     <View style={styles.container}>
       <StatusBar></StatusBar>
-      <GameLevel 
-        sudokuData={data}
-        back={()=>{}}
-        next={Next}
-      />
+      {(status === SecureStoreState['LOADING'] || !saveData) ? 
+          <Text><ActivityIndicator size="large" color="blue" /></Text>
+        :
+      <HomePage
+        saveData={saveData}
+        setSaveData={updateSaveData}
+      />}
     </View>
   );
 }
