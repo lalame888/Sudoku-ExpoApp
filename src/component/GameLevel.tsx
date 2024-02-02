@@ -12,6 +12,16 @@ type SelectIndex = {
     row: number,
     col: number
 }
+
+type CheckErrorTerm = {
+    row: number,
+    col: number,
+    ans: number | null
+}
+type CheckMap = Map<number,Array<CheckErrorTerm>>
+function setEqual(set: Set<SelectIndex>, value: SelectIndex) {
+    return Array.from(set).some((term)=> term.col === value.col && term.row === value.row);
+}
 export function GameLevel(props: GameLevelProps){
     const initData: SudokuPlayground<SquareValue> = useMemo(()=>{
         return props.sudokuData.init.map((row: SudokuRow<SudokuAns>)=>{
@@ -27,6 +37,56 @@ export function GameLevel(props: GameLevelProps){
     }, [props.sudokuData])
     const [data, setData] = useState<SudokuPlayground<SquareValue>>(initData)
     const [selected, setSelected] = useState<SelectIndex | undefined>(undefined)
+    const errorArray: Set<SelectIndex> = useMemo(()=>{
+        const error = new Set<SelectIndex>();
+        const indexArray: Array<CheckErrorTerm> = data.flatMap((row, rowIndex)=> row.map((col, colIndex)=> ({ans: col.ans, row: rowIndex, col:colIndex})))
+        function generateGroup(group: CheckMap, key: number, value: CheckErrorTerm) {
+            const term = group.get(key);
+            if (!term)group.set(key,[value]);
+            else group.set(key, [...term, value])
+        }
+        function checkGroupMap(group: CheckMap){
+            function checkGroup(row: Array<CheckErrorTerm>) {
+                if (row.every((term)=> term.ans))  { // 該組裡面都有東西
+                    const checkSet = new Set(row.map((t)=> t.ans))
+    
+                    if (checkSet.size !== row.length) {
+                        row.forEach((term)=>{
+                            error.add({row: term.row, col: term.col})
+                        })
+                    }
+                    
+                }
+            }
+            Array.from(group.entries()).map((v)=> v[1]).forEach((row)=>{
+                checkGroup(row);
+            })
+        }
+
+        const rowMap: CheckMap = new Map()
+        const colMap: CheckMap = new Map()
+        const groupMap: CheckMap = new Map()
+        indexArray.forEach((term)=>{
+            // 橫列
+            generateGroup(rowMap, term.row, term);
+
+            // 直列
+            generateGroup(colMap, term.col, term);
+            const col = colMap.get(term.col);
+            if (!col)colMap.set(term.col,[term]);
+            else colMap.set(term.col, [...col, term])
+
+            // 九宮格組
+            const groupIndex = Math.floor(term.row/3)*3+ Math.floor(term.col/3);
+            generateGroup(groupMap, groupIndex, term);
+
+        })
+        checkGroupMap(rowMap);
+        checkGroupMap(colMap);
+        checkGroupMap(groupMap);
+        
+        return error;
+    },[data])
     const MARGIN = 10;  
     const { width, height } = Dimensions.get('window');
     const outerContainerSize = Math.min(width - MARGIN*2, height-MARGIN*2); // 設定外層正方形的大小，可以自行調整
@@ -82,12 +142,14 @@ export function GameLevel(props: GameLevelProps){
                         return(
                             <View style={{...styles.row, marginBottom: (rowIndex%3 ===2 && rowIndex !== 8) ? 3 : 0}} key={rowIndex}>
                                 {rows.map((term, colIndex)=>{
+                                    const index = {row:rowIndex, col:colIndex};
                                     return (
                                         <Square 
                                             index={colIndex} key={colIndex}
                                             value={term} 
                                             isSelected={selected!== undefined&& selected.row === rowIndex && selected.col === colIndex} 
-                                            onPress={()=> setSelected({row:rowIndex, col:colIndex}) } 
+                                            onPress={()=> setSelected(index) } 
+                                          error={setEqual(errorArray,index)}
                                         />
                                     )
                                 })}

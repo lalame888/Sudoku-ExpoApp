@@ -1,6 +1,7 @@
 import { GestureResponderEvent, StyleProp, Text, TouchableOpacity, ViewStyle } from "react-native";
 import { SquareValue } from "../lib/interface";
 import { StyleSheet } from 'react-native';
+import { useMemo } from "react";
 
 interface SquareProps {
     index: number,
@@ -11,13 +12,19 @@ interface SquareProps {
     style?: any
 }
 export function Square(props: SquareProps){
+  const backgroundColor = useMemo(()=>{
+    if (props.value.isFix) return'lightgray'
+    if (props.error) return  '#f09d9d' 
+    if(props.value.ans === null ) return 'white' 
+    return '#fefbf3'
+  },[props.value, props.error])
 const styles = StyleSheet.create({
     button: {
       flex:1,
       flexBasis: 1/9, // 每個格子佔外層View的1/9
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: props.value.isFix? 'lightgray': props.error ? '#f09d9d' : '#fefbf3',
+      backgroundColor: backgroundColor,
       borderColor: props.isSelected? 'red' :  'gray',
       borderWidth: 1, 
       marginRight: props.index %3 === 2 ? 3 : 0,
