@@ -15,3 +15,11 @@ export type SquareValue = {
     guess: Set<SudokuAns>,
     isFix: boolean // 是不是固定的題目
 }
+
+export type LevelData = {
+    level: number,
+    data: SudokuData,
+    time: number | -1,
+    difficulty: number,
+    helpCount: number,
+}

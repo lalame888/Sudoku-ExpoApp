@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { SudokuPlayground, SquareValue, SudokuRow, SudokuAns, SudokuData } from "../../lib/interface"
 
 type SelectIndex = {
@@ -30,7 +30,12 @@ export function useSudoku(sudokuData: SudokuData){
 
     const [data, setData] = useState<SudokuPlayground<SquareValue>>(initData)
     const [selected, setSelected] = useState<SelectIndex | undefined>(undefined)
-    
+    useEffect(()=>{
+        setData(initData);
+        setSelected(undefined);
+    },[sudokuData])
+
+
     // 判斷有錯誤的座標
     const errorArray: Set<SelectIndex> = useMemo(()=>{
         const error = new Set<SelectIndex>();
@@ -67,9 +72,6 @@ export function useSudoku(sudokuData: SudokuData){
 
             // 直列
             generateGroup(colMap, term.col, term);
-            const col = colMap.get(term.col);
-            if (!col)colMap.set(term.col,[term]);
-            else colMap.set(term.col, [...col, term])
 
             // 九宮格組
             const groupIndex = Math.floor(term.row/3)*3+ Math.floor(term.col/3);
@@ -105,5 +107,22 @@ export function useSudoku(sudokuData: SudokuData){
         return Array.from(errorArray).some((term)=> term.col === index.col && term.row === index.row);
     },[errorArray])
 
-    return {data,selected,setSelected, isError , isSuccess, updateValue}
+    const superCheat = useCallback(()=>{
+        const ans = sudokuData.ans.map((row: SudokuRow<SudokuAns>)=>{
+            return row.map((term)=>{
+                const value: SquareValue =  {
+                    ans: term,
+                    guess: new Set(),
+                    isFix: true,
+                }
+                return value
+            })
+        }) as SudokuPlayground<SquareValue>
+        setData(ans);
+    },[sudokuData])
+
+    return {data,selected,setSelected, isError , isSuccess, updateValue,
+        superCheat
+    
+    }
 }

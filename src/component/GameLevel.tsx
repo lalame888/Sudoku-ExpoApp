@@ -1,20 +1,24 @@
-import { SquareValue, SudokuData } from '../lib/interface/'
-import { View, StyleSheet, Text, Dimensions, TouchableWithoutFeedback, Modal } from 'react-native'
+import { LevelData, SquareValue } from '../lib/interface/'
+import { FontAwesome5 } from '@expo/vector-icons';
+import { View, StyleSheet, Text, Dimensions, TouchableWithoutFeedback, Modal, TouchableHighlight, TouchableOpacity, Button } from 'react-native'
 import { Square } from './Square'
 import { useTimer } from '../lib/hook'
 import { useSudoku } from './useHook/useSudoku'
+import { useEffect } from 'react';
 
 interface GameLevelProps {
-    level: number,
-    sudokuData: SudokuData
+    sudokuData: LevelData,
+    next(): void,
+    back(): void
+
 }
 
 export function GameLevel(props: GameLevelProps){
-    const {timeText, showTime, isPaused, startTimer, pauseTimer} = useTimer();
-    const {data,selected,setSelected, isError , isSuccess, updateValue} = useSudoku(props.sudokuData) 
+    const {timeText, showTime, isPaused, startTimer, pauseTimer, resetTimer} = useTimer();
+    const {data,selected,setSelected, isError , isSuccess, updateValue, superCheat} = useSudoku(props.sudokuData.data) 
     const MARGIN = 10;  
     const { width, height } = Dimensions.get('window');
-    const outerContainerSize = Math.min(width - MARGIN*2, (height/2)-MARGIN*2); // 設定外層正方形的大小，可以自行調整
+    const outerContainerSize = Math.min(width - MARGIN*2, ((height-40)/2)-MARGIN*2); // 設定外層正方形的大小，可以自行調整
     const styles = StyleSheet.create({
         container: {
             flex: 1,
@@ -57,16 +61,40 @@ export function GameLevel(props: GameLevelProps){
             height: (outerContainerSize-10)/6,
             width: (outerContainerSize-10)/6,
             flexBasis: '33%',
+        },
+        modelView: {
+            flex: 1,
+            justifyContent:'center',
+            alignItems:'center',
+            backgroundColor: 'white'
         }
     });
+    useEffect(()=>{
+        // 完成關卡
+        if (isSuccess) {
+            pauseTimer(); // 停止計時
+            // TODO: 應該要儲存資料
+        }
+        
+    },[isSuccess])
+    function Next(){
+        props.next();
+        resetTimer();
+        startTimer();
+    }
 
     return (
         <View>
             <TouchableWithoutFeedback style={{ backgroundColor: 'gray', flex:1}} onPress={()=>setSelected(undefined)}>
                 <View style={styles.container}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.title}> Level: {props.level} </Text>
-                        <Text>經過時間 {showTime}</Text>
+                        <Text style={styles.title}> Level: {props.sudokuData.level} </Text>
+                        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems:'center'}}>
+                            <Text>經過時間 {showTime}</Text>
+                            <TouchableOpacity onPress={pauseTimer} style={{marginLeft: 10}}>
+                                <FontAwesome5 name="pause-circle" size={30} color="black" />
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     <View style={styles.checkerboard}>
                         {data.map((rows, rowIndex)=>{
@@ -90,6 +118,9 @@ export function GameLevel(props: GameLevelProps){
                     </View>
 
                     <View style={styles.console}>
+                        <View>
+                            <Button title='作弊' onPress={superCheat}/>
+                        </View>
                         <View style={styles.consoleKeyboard}>
                         {Array.from(Array(9)).map((t,i)=>{
                             const value ={ans:i+1, guess: new Set(), isFix: false} as SquareValue; 
@@ -119,9 +150,22 @@ export function GameLevel(props: GameLevelProps){
                     </View>
                 </View>
             </TouchableWithoutFeedback>
-            <Modal visible={isSuccess}>
-                完成關卡！ 花費時間: {timeText}
+            <Modal visible={isPaused && !isSuccess}>
+                <View style={styles.modelView}>
+                    <Text>遊戲暫停! </Text>
+                    <Text style={{marginBottom: 10}}>{showTime}</Text>
+                    <Button onPress={startTimer} title='繼續'/>
+                </View>
                 
+            </Modal>
+            <Modal visible={isSuccess}>
+                <View style={styles.modelView}>
+                    <Text>完成關卡！ 花費時間: {timeText}</Text>
+                    <View  style={styles.textContainer}>
+                        <Button title='回主頁面'/>
+                        <Button title='下一關' onPress={Next}/>
+                    </View>
+                </View>
             </Modal>
         </View>
     )
