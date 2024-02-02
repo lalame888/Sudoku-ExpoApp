@@ -14,7 +14,7 @@ interface GameLevelProps {
 }
 
 export function GameLevel(props: GameLevelProps){
-    const {timeText, showTime, isPaused, startTimer, pauseTimer, resetTimer} = useTimer();
+    const {timeText, showTime, isPaused, startTimer, pauseTimer} = useTimer(props.sudokuData.data);
     const {data,selected,setSelected, isError , isSuccess, updateValue, superCheat} = useSudoku(props.sudokuData.data) 
     const MARGIN = 10;  
     const { width, height } = Dimensions.get('window');
@@ -79,8 +79,6 @@ export function GameLevel(props: GameLevelProps){
     },[isSuccess])
     function Next(){
         props.next();
-        resetTimer();
-        startTimer();
     }
 
     return (
@@ -158,12 +156,18 @@ export function GameLevel(props: GameLevelProps){
                 </View>
                 
             </Modal>
-            <Modal visible={isSuccess}>
-                <View style={styles.modelView}>
-                    <Text>完成關卡！ 花費時間: {timeText}</Text>
-                    <View  style={styles.textContainer}>
-                        <Button title='回主頁面'/>
-                        <Button title='下一關' onPress={Next}/>
+            <Modal visible={isSuccess} 
+                animationType="none"
+                transparent={true} 
+            >
+                <View style={{flex:1, backgroundColor: 'rgba(0, 0, 0, 0.5)' , justifyContent: 'flex-end', paddingBottom: '15%',
+    alignItems: 'center',}} >
+                    <View style={{flex:1/6, flexWrap: 'wrap', backgroundColor: 'white', padding: 50, borderRadius: 20, borderColor: 'gray', borderWidth: 1, justifyContent: 'space-around'}}>
+                        <Text>完成關卡！ 花費時間: {timeText}</Text>
+                        <View  style={styles.textContainer}>
+                            <Button title='回主頁面'/>
+                            <Button title='下一關' onPress={Next}/>
+                        </View>
                     </View>
                 </View>
             </Modal>

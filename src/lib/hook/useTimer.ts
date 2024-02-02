@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { getTimerObject } from "../utils";
 
-export function useTimer(){
+export function useTimer(props: any){
     const [timer, setTimer] = useState<number>(0);
     const [isPaused, setIsPaused] = useState<boolean>(false);
     const timerRef = useRef<any>(null);
     useEffect(()=>{
         resetTimer()
         startTimer()
-    },[])
+    },[props])
     const startTimer = useCallback(() => {
         setIsPaused(false);
         timerRef.current = setInterval(() => {
