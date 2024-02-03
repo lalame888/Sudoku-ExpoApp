@@ -8,10 +8,11 @@ import { useEffect } from 'react';
 
 // TODO:
 /**
- * 1. 主畫面、儲存結果、載入儲存資料
+ * 1. 主畫面
  * 2. 開關錯誤檢查功能 （不要一開始就開啟，或是可以預設開啟，後來關閉）
  * 3. 筆記、猜測功能切換
  * 4. 設置：回主頁面、重新遊戲、跟開關錯誤項之類的設定放一起
+ * 5. 回上一頁或回主畫面的時候double check，確認是否要捨棄目前的遊戲進度（如果有填寫內容的時候問）
  */
 interface GameLevelProps {
     sudokuData: LevelData,
@@ -25,12 +26,11 @@ export function GameLevel(props: GameLevelProps){
     const {data,selected,setSelected, isError , isSuccess, updateValue, superCheat} = useSudoku(props.sudokuData.data) 
     const MARGIN = 10;  
     const { width, height } = Dimensions.get('window');
-    const outerContainerSize = Math.min(width - MARGIN*2, ((height-40)/2)-MARGIN*2); // 設定外層正方形的大小，可以自行調整
+    const outerContainerSize = Math.min(width - MARGIN*2, ((height-60)/2)-MARGIN*2); // 設定外層正方形的大小，可以自行調整
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            margin: MARGIN,
-            marginTop: 80,
+            padding: MARGIN,
         },
         textContainer: {
             flexDirection: 'row', 
@@ -54,7 +54,7 @@ export function GameLevel(props: GameLevelProps){
         },
         console: {
             flex: 1,
-            marginTop: 50
+            marginTop: 40
         },
         consoleKeyboard: {
             flexDirection: 'row',
@@ -89,7 +89,7 @@ export function GameLevel(props: GameLevelProps){
                 }
             })
         }
-    },[isSuccess, timer, props.sudokuData])
+    },[isSuccess])
 
     return (
         <View>
@@ -175,7 +175,7 @@ export function GameLevel(props: GameLevelProps){
                     <View style={{flex:1/6, flexWrap: 'wrap', backgroundColor: 'white', padding: 50, borderRadius: 20, borderColor: 'gray', borderWidth: 1, justifyContent: 'space-around'}}>
                         <Text>完成關卡！ 花費時間: {timeText}</Text>
                         <View  style={styles.textContainer}>
-                            <Button title='回主頁面'/>
+                            <Button title='回主頁面' onPress={props.back}/>
                             <Button title='下一關' onPress={props.next}/>
                         </View>
                     </View>

@@ -17,6 +17,7 @@ export type SquareValue = {
 }
 
 export type LevelData = {
+    name: string,
     level: number,
     data: SudokuData,
     time: number | -1,

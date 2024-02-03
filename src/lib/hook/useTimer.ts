@@ -5,9 +5,10 @@ export function useTimer(props: any){
     const [timer, setTimer] = useState<number>(0);
     const [isPaused, setIsPaused] = useState<boolean>(false);
     const timerRef = useRef<any>(null);
-    useEffect(()=>{
-        resetTimer()
-        startTimer()
+    useEffect(()=>{ // 資料有變動的時候重新計時
+        setTimer(0);
+        clearInterval(timerRef.current);
+        startTimer();
     },[props])
     const startTimer = useCallback(() => {
         setIsPaused(false);

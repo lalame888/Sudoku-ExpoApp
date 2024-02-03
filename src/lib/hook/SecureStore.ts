@@ -18,8 +18,7 @@ export function useSecureStore<T>(
   const [state, setState] = useState<SecureStoreState>(
     SecureStoreState.LOADING,
   );
-  const [data, setData] = useState<T | undefined | null>(init);
-
+  const [data, setData] = useState<T | undefined | null>(undefined);
   useEffect(() => {
     const loadData = async () => {
       const savedState = await AsyncStorage.getItem(`@${appName}:${key}`);
@@ -37,7 +36,7 @@ export function useSecureStore<T>(
       }
     };
     loadData();
-  }, [init, key]);
+  }, [key]);
 
   useEffect(() => {
     const saveData = async () => {
