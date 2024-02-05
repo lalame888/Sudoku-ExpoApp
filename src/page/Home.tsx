@@ -1,7 +1,7 @@
 import { ActivityIndicator, StyleSheet, View, Text } from 'react-native';
 import { HomePageProps } from '../lib/interface/StackNavigator';
 import { SecureStoreState } from '../lib/hook';
-import { HomeMenu } from '../component/HomeMenu';
+import { HomeMenu } from '../component/';
 import { useSaveData } from '../lib/hook/Provider';
 
 
@@ -14,7 +14,7 @@ import { useSaveData } from '../lib/hook/Provider';
   }
 
   return (
-    <View style={{flex: 1, backgroundColor: 'white',  justifyContent: 'center', alignItems: 'center'}}>
+    <View style={styles.container}>
         {   
         (status === SecureStoreState['LOADING'] || !saveData) ? 
             <Text><ActivityIndicator size="large" color="blue" /></Text>:
@@ -27,10 +27,7 @@ import { useSaveData } from '../lib/hook/Provider';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1, backgroundColor: 'white',  justifyContent: 'center', alignItems: 'center'
   },
 });
 

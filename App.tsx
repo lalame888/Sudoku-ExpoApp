@@ -19,8 +19,8 @@ export default function App() {
           <Stack.Navigator initialRouteName="Home" screenOptions={{headerStyle: {
                 backgroundColor: 'white', //橘色
             }}}>
-            <Stack.Screen name="Home" component={HomePage} options={{ title: 'Home'}} />
-            <Stack.Screen name="Game" component={GamePage} options={{title: 'RRR'}} />
+            <Stack.Screen name="Home" component={HomePage} options={{ title: '主選單'}} />
+            <Stack.Screen name="Game" component={GamePage} options={{title: 'Level'}} />
             
             {/* 其他頁面的設置 */}
           </Stack.Navigator>
