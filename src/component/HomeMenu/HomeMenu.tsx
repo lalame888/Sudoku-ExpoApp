@@ -25,21 +25,10 @@ export function HomeMenu(props: HomeMenuProps) {
         scrollViewRef.current.scrollTo({ x: offsetX, animated: true });
       }
     }, [currentPage]);
-    
-  const handleArrowClick = (direction: Direction) => {
-    // 根據方向調整當前顯示的關卡頁面
-    if (direction === Direction['right']) {
-      setCurrentPage(currentPage + 1);
-    } else if (direction === Direction['left'] && currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
 
   const handleMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const newPage = Math.ceil(event.nativeEvent.contentOffset.x / event.nativeEvent.layoutMeasurement.width);
     setCurrentPage(newPage + 1);
-    console.log('E');
   };
 
   return (
@@ -60,7 +49,6 @@ export function HomeMenu(props: HomeMenuProps) {
         ref={scrollViewRef}
         horizontal
         pagingEnabled
-        // onScroll={handleScroll}
         onMomentumScrollEnd={handleMomentumScrollEnd}
         style={{ flex: 1 }}
       >
