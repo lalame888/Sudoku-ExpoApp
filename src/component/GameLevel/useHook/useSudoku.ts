@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { SudokuPlayground, SquareValue, SudokuRow, SudokuAns, SudokuData } from "../../lib/interface"
+import { SudokuPlayground, SquareValue, SudokuRow, SudokuAns, SudokuData } from "../../../lib/interface"
 
 type SelectIndex = {
     row: number,

@@ -1,8 +1,8 @@
-import { LevelData, SquareValue, SudokuAns, SudokuPlayground } from '../lib/interface/'
+import { LevelData, SquareValue, SudokuAns, SudokuPlayground } from '../../lib/interface/'
 import { FontAwesome5 } from '@expo/vector-icons';
-import { View, StyleSheet, Text, Dimensions, TouchableWithoutFeedback, Modal, TouchableHighlight, TouchableOpacity, Button } from 'react-native'
+import { View, StyleSheet, Text, Dimensions, TouchableWithoutFeedback, Modal, TouchableOpacity, Button } from 'react-native'
 import { Square } from './Square'
-import { useTimer } from '../lib/hook'
+import { useTimer } from '../../lib/hook'
 import { useSudoku } from './useHook/useSudoku'
 import { useEffect } from 'react';
 
@@ -26,11 +26,11 @@ export function GameLevel(props: GameLevelProps){
     const {data,selected,setSelected, isError , isSuccess, updateValue, superCheat} = useSudoku(props.sudokuData.data) 
     const MARGIN = 10;  
     const { width, height } = Dimensions.get('window');
-    const outerContainerSize = Math.min(width - MARGIN*2, ((height-60)/2)-MARGIN*2); // 設定外層正方形的大小，可以自行調整
+    const outerContainerSize = Math.min(width - MARGIN, ((height-60)/2)-MARGIN*2); // 設定外層正方形的大小，可以自行調整
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            padding: MARGIN,
+            paddingTop: MARGIN,
         },
         textContainer: {
             flexDirection: 'row', 

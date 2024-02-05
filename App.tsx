@@ -17,12 +17,10 @@ export default function App() {
         <StatusBar></StatusBar>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Home" screenOptions={{headerStyle: {
-                backgroundColor: '#f4511e', //橘色
+                backgroundColor: 'white', //橘色
             }}}>
             <Stack.Screen name="Home" component={HomePage} options={{ title: 'Home'}} />
-            <Stack.Screen name="Game" component={GamePage} options={{title: 'RRR',headerStyle: {
-                backgroundColor: '#f4511e', //橘色
-            },}} />
+            <Stack.Screen name="Game" component={GamePage} options={{title: 'RRR'}} />
             
             {/* 其他頁面的設置 */}
           </Stack.Navigator>

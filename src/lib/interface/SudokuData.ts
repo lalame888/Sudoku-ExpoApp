@@ -23,4 +23,5 @@ export type LevelData = {
     time: number | -1,
     difficulty: number,
     helpCount: number,
+    mapNumber: number
 }

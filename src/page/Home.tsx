@@ -1,9 +1,6 @@
 import { ActivityIndicator, StyleSheet, View, Text } from 'react-native';
-import { useState } from 'react';
-import GamePage from './Game';
 import { HomePageProps } from '../lib/interface/StackNavigator';
-import { LevelData } from '../lib/interface';
-import { SecureStoreState, useSecureStore } from '../lib/hook';
+import { SecureStoreState } from '../lib/hook';
 import { HomeMenu } from '../component/HomeMenu';
 import { useSaveData } from '../lib/hook/Provider';
 

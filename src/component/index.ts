@@ -1,1 +1,1 @@
-export * from './GameLevel'
+export * from './GameLevel/GameLevel'

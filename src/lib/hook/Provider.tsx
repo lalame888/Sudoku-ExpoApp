@@ -1,8 +1,14 @@
-import { ReactNode, createContext, useContext } from "react";
+import { ReactNode, createContext, useContext, useMemo } from "react";
 import { LevelData } from "../interface";
 import { SecureStoreState, useSecureStore } from "./SecureStore";
 
-const DataContext = createContext({saveData: [] as LevelData[] | null | undefined , updateSaveData:(newSave: LevelData)=>{},status: SecureStoreState['LOADING'] });
+const initData = {
+  saveData: [] as LevelData[] | null | undefined , 
+  updateSaveData:(newSave: LevelData)=>{},
+  status: SecureStoreState['LOADING'] , 
+  usedMapNumber: [] as Array<number>
+}
+const DataContext = createContext(initData);
 
 interface Props {
     children: ReactNode
@@ -22,8 +28,11 @@ export function DataProvider(props: Props){
         return arr;
       })
     }
+    const usedMapNumber = useMemo(()=>{
+      return saveData?.map((t)=> t.mapNumber) || [];
+    },[saveData])
     return (
-        <DataContext.Provider value={{ saveData, status, updateSaveData }}>
+        <DataContext.Provider value={{ saveData, status, updateSaveData, usedMapNumber }}>
           {props.children}
         </DataContext.Provider>
       );
